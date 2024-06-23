@@ -3,6 +3,7 @@ import express from 'express'
 import mongoose from 'mongoose';
 import Messages from './dbmsgs.js'
 import Pusher from 'pusher'
+import cors from 'cors' //allowed req. to come from any endpoint and Emitting any kind of Header 
 
 // app config 
 const app = express()
@@ -18,6 +19,8 @@ const pusher = new Pusher({ //got these codes from pusher site
 
 //middleware 
 app.use(express.json())
+
+app.use(cors())
 
 //DB config
 const connection_url = 'mongodb+srv://jatinjaat2801:wP8LY0uxl44hNrfH@cluster0.crzdpgt.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
@@ -43,8 +46,9 @@ db.once('open', () => {
             const msgDetails = change.fullDocument; // fullDocument is field in change in watch() and we saved it in msgDetails
             pusher.trigger('messages','inserted', // trigger pusher here and messages is a channel of pusher
                 {
-                    name: msgDetails.user,
-                    message: msgDetails.message
+                    name: msgDetails.name,
+                    message: msgDetails.message,
+                    received: msgDetails.received,
                 }
             )
         }else{
@@ -60,7 +64,7 @@ app.get('/', (req, res) => res.status(200).send("hello"));
 
 app.get('/messages/sync', async (req, res) => { // to store all data 
     try {
-        const data = await Messages.find(); // find db names Messages 
+        const data = await Messages.find(); // find db named Messages 
         res.status(200).send(data); // Send all the data of DB 
     } catch (err) {
         res.status(500).send(err);
