@@ -6,4 +6,5 @@ const whatsappSchema = new mongoose.Schema({
     received : Boolean,
 })
 
-export default mongoose.model('messageContent' ,  whatsappSchema) ; // messageContent is the name we gave to show in our DB collection
+//collection
+export default mongoose.model('messagecontents' ,  whatsappSchema) ; // messageContents is the name we gave to show in our DB collection
